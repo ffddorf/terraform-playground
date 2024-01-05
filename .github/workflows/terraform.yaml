@@ -67,7 +67,7 @@ jobs:
               ? "No changes"
               : `${createCount} to add, ${updateCount} to change, ${deleteCount} to destroy`
 
-            await octokit.rest.checks.create({
+            await github.rest.checks.create({
               owner: context.repo.owner,
               name: context.repo.repo,
               head_sha: context.sha,
