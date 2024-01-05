@@ -62,10 +62,10 @@ jobs:
             const updateCount = countActions(plan, 'update')
             const deleteCount = countActions(plan, 'delete')
 
-            const noChanges = create_count == 0 && update_count == 0 && delete_count == 0
+            const noChanges = createCount == 0 && updateCount == 0 && deleteCount == 0
             const summary = noChanges
               ? "No changes"
-              : `${create_count} to add, ${update_count} to change, ${delete_count} to destroy`
+              : `${createCount} to add, ${updateCount} to change, ${deleteCount} to destroy`
 
             await octokit.rest.checks.create({
               owner: context.repo.owner,
