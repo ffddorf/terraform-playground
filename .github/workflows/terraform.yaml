@@ -39,7 +39,7 @@ jobs:
           terraform show -json > state.json
           aws s3 cp state.json ${S3_URI}/$(date +%s).json
 
-          FILES=$(aws s3 ls ${S3_URI}/ | sort -)
+          FILES=$(aws s3 ls ${S3_URI}/ --output=json | jq '.[]')
           echo ${FILES}
 
       - run: terraform show -no-color tfplan > summary.txt
