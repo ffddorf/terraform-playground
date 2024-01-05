@@ -115,17 +115,18 @@ jobs:
             const commentsToHide = comments.nodes.filter((comment) => {
               return !comment.minimizedReason && comment.author.login == "github-actions"
             })
-            console.log({ commentsToHide })
-            await github.graphql(`
-              mutation {
-                ${commentsToHide.map((c,i) =>
-                  `c${i}: minimizeComment(input: { subjectId: "${c.id}", classifier: OUTDATED }) {
-                    clientMutationId
-                  }
-                  `
-                ).join("")}
-              }
-            `)
+            if (commentsToHide.length > 0) {
+              await github.graphql(`
+                mutation {
+                  ${commentsToHide.map((c,i) =>
+                    `c${i}: minimizeComment(input: { subjectId: "${c.id}", classifier: OUTDATED }) {
+                      clientMutationId
+                    }
+                    `
+                  ).join("")}
+                }
+              `)
+            }
 
             const fs = require('fs').promises
             const plan = await fs.readFile('summary.txt', 'utf-8')
