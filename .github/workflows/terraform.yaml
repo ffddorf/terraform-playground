@@ -67,6 +67,7 @@ jobs:
               ? "No changes"
               : `${createCount} to add, ${updateCount} to change, ${deleteCount} to destroy`
 
+            console.log({ context })
             await github.rest.repos.createCommitStatus({
               owner: context.repo.owner,
               repo: context.repo.repo,
