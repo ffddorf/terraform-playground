@@ -43,7 +43,8 @@ jobs:
             aws s3api list-objects-v2 --bucket "${S3_BUCKET}" --prefix "${{ github.repository }}" | \
             jq -r '.Contents | map(.Key) | sort | reverse | .[5:] | .[]' \
           )
-          echo ${DELETE_FILES}
+          echo "Going to delete the following files: ${DELETE_FILES}"
+          for file in ${DELETE_FILES}; do aws s3 rm s3://${S3_BUCKET}/$file; done
 
       - run: terraform show -no-color tfplan > summary.txt
         if: ${{ github.event_name == 'pull_request' }}
