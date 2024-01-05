@@ -34,9 +34,17 @@ jobs:
           script: |
             const fs = require('fs').promises
             const plan = await fs.readFile('summary.txt', 'utf-8')
+
+            const codefence = "```"
+            const body = `
+            🏗️ Terraform Plan
+            ${codefence}
+            ${plan.trim("\n")}
+            ${codefence}`
+
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: "```\n" + plan + "\n```",
+              body,
             })
