@@ -36,7 +36,7 @@ jobs:
           AWS_ENDPOINT_URL: https://s3.us-east-005.backblazeb2.com
         run: |
           terraform show -json > state.json
-          aws s3 cp state.json s3://terraform-state-backup/${{ github.repository }}/${date +%s}.json
+          aws s3 cp state.json s3://terraform-state-backup/${{ github.repository }}/$(date +%s).json
 
       - run: terraform show -no-color tfplan > summary.txt
         if: ${{ github.event_name == 'pull_request' }}
