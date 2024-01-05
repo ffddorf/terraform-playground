@@ -66,7 +66,10 @@ jobs:
             const noChanges = createCount == 0 && updateCount == 0 && deleteCount == 0
             const summary = noChanges
               ? "No changes"
-              : `${createCount} to add, ${updateCount} to change, ${deleteCount} to destroy`
+              : (context.eventName === 'push'
+                ? `${createCount} added, ${updateCount} changed, ${deleteCount} destroyed`
+                : `${createCount} to add, ${updateCount} to change, ${deleteCount} to destroy`
+              )
 
             const sha = context.eventName === 'pull_request'
               ? context.payload.after
