@@ -24,8 +24,11 @@ jobs:
           terraform_version: "1.6.6"
 
       - run: terraform init
-      - run: |
-          terraform plan -out=tfplan -no-color > summary.txt
+
+      - run: terraform plan -out=tfplan
+
+      - run: terraform show -no-color tfplan > summary.txt
+        if: ${{ github.event_name == 'pull_request' }}
       - name: Show plan on PR
         uses: actions/github-script@v7
         if: ${{ github.event_name == 'pull_request' }}
