@@ -1,0 +1,24 @@
+name: Terraform
+
+on:
+  push:
+
+jobs:
+  run:
+    name: Run
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.6.6"
+
+      - run: terraform init
+        env:
+          TF_HTTP_PASSWORD: ${{ github.token }}
+      - run: terraform plan
