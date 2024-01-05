@@ -28,6 +28,15 @@ jobs:
       - run: terraform plan -out=tfplan
       - run: terraform apply tfplan
         if: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
+      - name: Backup state
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.B2_TFBACKUP_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.B2_TFBACKUP_SECRET_KEY }}
+          AWS_DEFAULT_REGION: us-east-1
+          AWS_ENDPOINT_URL: https://s3.us-east-005.backblazeb2.com
+        run: |
+          terraform show -json > state.json
+          aws s3 cp state.json s3://terraform-state-backup/${{ github.repository }}/${date +%s}.json
 
       - run: terraform show -no-color tfplan > summary.txt
         if: ${{ github.event_name == 'pull_request' }}
