@@ -26,6 +26,8 @@ jobs:
       - run: terraform init
 
       - run: terraform plan -out=tfplan
+      - run: terraform apply tfplan
+        if: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
 
       - run: terraform show -no-color tfplan > summary.txt
         if: ${{ github.event_name == 'pull_request' }}
