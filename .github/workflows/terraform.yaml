@@ -10,6 +10,8 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
+    env:
+      TF_HTTP_PASSWORD: ${{ github.token }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -19,6 +21,4 @@ jobs:
           terraform_version: "1.6.6"
 
       - run: terraform init
-        env:
-          TF_HTTP_PASSWORD: ${{ github.token }}
       - run: terraform plan
