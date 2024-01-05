@@ -12,7 +12,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
-      checks: write
+      statuses: write
     env:
       TF_HTTP_PASSWORD: ${{ github.token }}
       TF_IN_AUTOMATION: "true"
@@ -67,18 +67,13 @@ jobs:
               ? "No changes"
               : `${createCount} to add, ${updateCount} to change, ${deleteCount} to destroy`
 
-            await github.rest.checks.create({
+            await github.rest.repos.createCommitStatus({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              head_sha: context.sha,
-              status: 'completed',
-              conclusion: noChanges ? 'neutral' : 'success',
-              name: "Terraform",
-              output: {
-                title: context.eventName === 'push' ? "Apply" : "Plan",
-                summary,
-              },
-            });
+              sha: context.sha,
+              state: 'success',
+              description: summary,
+            })
 
       - run: terraform show -no-color tfplan > summary.txt
         if: ${{ github.event_name == 'pull_request' }}
