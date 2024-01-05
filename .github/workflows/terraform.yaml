@@ -75,7 +75,8 @@ jobs:
               conclusion: noChanges ? 'neutral' : 'success',
               name: "Terraform",
               output: {
-                title: summary,
+                title: context.eventName === 'push' ? "Apply" : "Plan",
+                summary,
               },
             });
 
