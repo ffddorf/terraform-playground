@@ -12,6 +12,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
+      statuses: write
     env:
       TF_HTTP_PASSWORD: ${{ github.token }}
       TF_IN_AUTOMATION: "true"
@@ -44,6 +45,39 @@ jobs:
             jq -r '.Contents | map(.Key) | sort | reverse | .[5:] | .[]' \
           )
           for file in ${DELETE_FILES}; do aws s3 rm s3://${S3_BUCKET}/$file; done
+
+      - run: terraform show -json tfplan > tfplan.json
+      - name: Create status check with details
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ github.token }}
+          script: |
+            const fs = require('fs').promises
+            const plan = JSON.parse(await fs.readFile('tfplan.json', 'utf-8'))
+
+            function countActions(plan, type) {
+              return plan.resource_changes.filter(ch => ch.change.actions.includes(type)).length
+            }
+            const createCount = countActions(plan, 'create')
+            const updateCount = countActions(plan, 'update')
+            const deleteCount = countActions(plan, 'delete')
+
+            const noChanges = createCount == 0 && updateCount == 0 && deleteCount == 0
+            const summary = noChanges
+              ? "No changes"
+              : `${createCount} to add, ${updateCount} to change, ${deleteCount} to destroy`
+
+            const sha = context.eventName === 'pull_request'
+              ? context.payload.after
+              : context.sha
+            await github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha,
+              state: 'success',
+              context: 'Terraform',
+              description: summary,
+            })
 
       - run: terraform show -no-color tfplan > summary.txt
         if: ${{ github.event_name == 'pull_request' }}
@@ -80,17 +114,18 @@ jobs:
             const commentsToHide = comments.nodes.filter((comment) => {
               return !comment.minimizedReason && comment.author.login == "github-actions"
             })
-            console.log({ commentsToHide })
-            await github.graphql(`
-              mutation {
-                ${commentsToHide.map((c,i) =>
-                  `c${i}: minimizeComment(input: { subjectId: "${c.id}", classifier: OUTDATED }) {
-                    clientMutationId
-                  }
-                  `
-                ).join("")}
-              }
-            `)
+            if (commentsToHide.length > 0) {
+              await github.graphql(`
+                mutation {
+                  ${commentsToHide.map((c,i) =>
+                    `c${i}: minimizeComment(input: { subjectId: "${c.id}", classifier: OUTDATED }) {
+                      clientMutationId
+                    }
+                    `
+                  ).join("")}
+                }
+              `)
+            }
 
             const fs = require('fs').promises
             const plan = await fs.readFile('summary.txt', 'utf-8')
