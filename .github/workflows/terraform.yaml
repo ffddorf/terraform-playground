@@ -67,12 +67,15 @@ jobs:
               ? "No changes"
               : `${createCount} to add, ${updateCount} to change, ${deleteCount} to destroy`
 
-            console.log({ context })
+            const sha = context.eventName === 'pull_request'
+              ? context.payload.after
+              : context.sha
             await github.rest.repos.createCommitStatus({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              sha: context.sha,
+              sha,
               state: 'success',
+              context: 'Terraform',
               description: summary,
             })
 
