@@ -34,13 +34,16 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.B2_TFBACKUP_SECRET_KEY }}
           AWS_DEFAULT_REGION: us-east-1
           AWS_ENDPOINT_URL: https://s3.us-east-005.backblazeb2.com
-          S3_URI: s3://terraform-state-backup/${{ github.repository }}
+          S3_BUCKET: terraform-state-backup
         run: |
           terraform show -json > state.json
-          aws s3 cp state.json ${S3_URI}/$(date +%s).json
+          aws s3 cp state.json s3://${S3_BUCKET}/${{ github.repository }}/$(date +%s).json
 
-          FILES=$(aws s3 ls ${S3_URI}/ --output=json | jq '.[]')
-          echo ${FILES}
+          KEEP_FILES=$(\
+            aws s3api list-objects-v2 --bucket "${S3_BUCKET}" --prefix "${{ github.repository }}" | \
+            jq -r '.Contents | map(.Key) | sort | .[:5] | .[]' \
+          )
+          echo ${KEEP_FILES}
 
       - run: terraform show -no-color tfplan > summary.txt
         if: ${{ github.event_name == 'pull_request' }}
