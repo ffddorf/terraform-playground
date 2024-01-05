@@ -39,11 +39,11 @@ jobs:
           terraform show -json > state.json
           aws s3 cp state.json s3://${S3_BUCKET}/${{ github.repository }}/$(date +%s).json
 
-          KEEP_FILES=$(\
+          DELETE_FILES=$(\
             aws s3api list-objects-v2 --bucket "${S3_BUCKET}" --prefix "${{ github.repository }}" | \
-            jq -r '.Contents | map(.Key) | sort | reverse | .[:5] | .[]' \
+            jq -r '.Contents | map(.Key) | sort | reverse | .[5:] | .[]' \
           )
-          echo ${KEEP_FILES}
+          echo ${DELETE_FILES}
 
       - run: terraform show -no-color tfplan > summary.txt
         if: ${{ github.event_name == 'pull_request' }}
