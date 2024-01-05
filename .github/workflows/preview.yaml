@@ -18,7 +18,7 @@ jobs:
     steps:
       - name: Download Workspace
         run: |
-          curl ${{ inputs.workspace_transfer_url }} | tar -xzf -
+          curl ${{ inputs.workspace_transfer_url }} --fail | tar -xzf -
       - run: ls -la
       - uses: hashicorp/setup-terraform@v3
         with:
