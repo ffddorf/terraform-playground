@@ -32,6 +32,45 @@ jobs:
         with:
           github-token: ${{ github.token }}
           script: |
+            const { repository: { pullRequest: { comments } } } = await github.graphql(`
+              query($owner:String!, $name:String!, $pr:Int!) {
+                repository(owner:$owner, name:$name) {
+                  pullRequest(number:$pr) {
+                    comments(last: 10) {
+                      nodes {
+                        id,
+                        minimizedReason
+                        author {
+                          ...on Bot {
+                            login
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            `, {
+              owner: context.repo.owner,
+              name: context.repo.repo,
+              pr: context.issue.number,
+            })
+
+            const commentsToHide = comments.nodes.filter((comment) => {
+              return !comment.minimizedReason && comment.author.login == "github-actions"
+            })
+            console.log({ commentsToHide })
+            await github.graphql(`
+              mutation {
+                ${commentsToHide.map((c,i) =>
+                  `c${i}: minimizeComment(input: { subjectId: c.id, classifier: OUTDATED }) {
+                    clientMutationId
+                  }
+                  `
+                ).join("")}
+              }
+            `)
+
             const fs = require('fs').promises
             const plan = await fs.readFile('summary.txt', 'utf-8')
 
