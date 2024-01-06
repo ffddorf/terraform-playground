@@ -61,7 +61,7 @@ jobs:
             let applyLog;
             try {
               applyLog = await fs.readFile('apply.log', 'utf-8')
-            } catch() {}
+            } catch {}
 
             function countActions(plan, type) {
               return plan.resource_changes.filter(ch => ch.change.actions.includes(type)).length
