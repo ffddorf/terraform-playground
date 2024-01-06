@@ -76,8 +76,9 @@ jobs:
 
             const codefence = "```"
             const summary = `
+            # Terraform Plan
             ${codefence}
-            ${humanSummary}
+            ${humanSummary.trim("\n")}
             ${codefence}
             `
 
