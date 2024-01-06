@@ -1,0 +1,17 @@
+name: "Terraform Checks"
+description: "Annotate a commit with details about the Terraform run"
+inputs:
+  token:
+    description: "GitHub token"
+    required: true
+  plan-json:
+    description: "JSON file containing the plan"
+    required: true
+  plan-summary:
+    description: "Log file with the human readable plan summary"
+    required: true
+  apply-summary:
+    description: "Log file with the human readable apply summary"
+runs:
+  using: "node20"
+  main: "index.js"
