@@ -2,6 +2,6 @@ resource "null_resource" "test" {
 
 }
 
-resource "random_pet" "dummy" {
-
+resource "random_string" "foo" {
+  length = 20
 }
