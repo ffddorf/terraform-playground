@@ -74,6 +74,13 @@ jobs:
                 : `${createCount} to add, ${updateCount} to change, ${deleteCount} to destroy`
               )
 
+            const codefence = "```"
+            const summary = `
+            ${codefence}
+            ${humanSummary}
+            ${codefence}
+            `
+
             const sha = context.eventName === 'pull_request'
               ? context.payload.pull_request.head.sha
               : context.sha
@@ -86,7 +93,7 @@ jobs:
               name: context.eventName === 'push' ? "Apply" : "Plan",
               output: {
                 title,
-                summary: humanSummary,
+                summary,
               },
             });
 
