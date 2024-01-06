@@ -87,7 +87,7 @@ jobs:
             ${!!applyLog ? `
             # Terraform Apply
             ${codefence}
-            ${applyLog}
+            ${applyLog.replace(/\u001b\[[^m]+m/g, '').trim()}
             ${codefence}
             ` : ""}
             `
