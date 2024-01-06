@@ -72,7 +72,7 @@ jobs:
               )
 
             const sha = context.eventName === 'pull_request'
-              ? context.payload.after
+              ? context.payload.pull_request.head.sha
               : context.sha
             await github.rest.checks.create({
               owner: context.repo.owner,
