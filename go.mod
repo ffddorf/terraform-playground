@@ -5,6 +5,7 @@ go 1.21.5
 require (
 	github.com/cenkalti/backoff v2.2.1+incompatible
 	github.com/google/go-github/v57 v57.0.0
+	github.com/google/go-github/v58 v58.0.0
 	github.com/hashicorp/go-slug v0.13.3
 	github.com/stretchr/testify v1.8.4
 	golang.ngrok.com/ngrok v1.7.0
