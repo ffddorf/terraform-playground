@@ -13,6 +13,8 @@ github.com/google/go-querystring v1.1.0 h1:AnCroh3fv4ZBgVIf1Iwtovgjaw/GiKJo8M8yD
 github.com/google/go-querystring v1.1.0/go.mod h1:Kcdr2DB4koayq7X8pmAG4sNG59So17icRSOU623lUBU=
 github.com/hashicorp/go-slug v0.13.3 h1:JiYNpOkD0HmMWw/lNYiBAUD6+WIBIV7UftKiqIbpNqM=
 github.com/hashicorp/go-slug v0.13.3/go.mod h1:RA4C+ezyC2nDsiPM5+1djqagveBBJdSN/fM2QCUziYQ=
+github.com/hashicorp/go-slug v0.14.0 h1:/aZdUDjR74TSlsQp3hA9nqhCQkQHAUr2jjtuUfWqI9E=
+github.com/hashicorp/go-slug v0.14.0/go.mod h1:THWVTAXwJEinbsp4/bBRcmbaO5EYNLTqxbG4tZ3gCYQ=
 github.com/hashicorp/yamux v0.1.1 h1:yrQxtgseBDrq9Y652vSRDvsKCJKOUD+GzTS4Y0Y8pvE=
 github.com/hashicorp/yamux v0.1.1/go.mod h1:CtWFDAQgb7dxtzFs4tWbplKIe2jSi3+5vKbgIO0SLnQ=
 github.com/inconshreveable/log15 v3.0.0-testing.5+incompatible h1:VryeOTiaZfAzwx8xBcID1KlJCeoWSIpsNbSk+/D2LNk=
