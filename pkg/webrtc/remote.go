@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"os"
 
 	"github.com/pion/webrtc/v3"
 )
@@ -65,7 +66,14 @@ func RemoteChannel(ctx context.Context, localSession string, dst io.Writer) erro
 		return err
 	}
 
-	fmt.Printf("WEBRTC-ANSWER:%s\n", answer.SDP)
+	fmt.Print("WEBRTC-ANSWER:")
+	out := base64.NewEncoder(base64.StdEncoding, os.Stdout)
+	if err := json.NewEncoder(out).Encode(&answer); err != nil {
+		return err
+	}
+	_ = out.Close()
+	fmt.Println()
+
 	for candidate := range iceGatheringDone {
 		fmt.Printf("WEBRTC-CANDIDATE:%s\n", candidate.String())
 	}
