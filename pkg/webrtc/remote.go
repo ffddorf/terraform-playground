@@ -79,7 +79,7 @@ func RemoteChannel(ctx context.Context, localSession string, dst io.Writer) erro
 	fmt.Println()
 
 	for candidate := range iceGatheringDone {
-		fmt.Printf("WEBRTC-CANDIDATE:%s\n", candidate.String())
+		fmt.Printf("WEBRTC-CANDIDATE:%s\n", candidate.ToJSON().Candidate)
 	}
 
 	<-ctx.Done()
