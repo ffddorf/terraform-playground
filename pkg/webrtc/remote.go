@@ -12,6 +12,9 @@ import (
 )
 
 func RemoteChannel(ctx context.Context, localSession string, dst io.Writer) error {
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
 	peerConnection, err := webrtc.NewPeerConnection(config)
 	if err != nil {
 		return err
@@ -23,9 +26,10 @@ func RemoteChannel(ctx context.Context, localSession string, dst io.Writer) erro
 	iceGatheringDone := iceGather(peerConnection)
 	peerConnection.OnConnectionStateChange(func(s webrtc.PeerConnectionState) {
 		fmt.Printf("Peer Connection State has changed: %s\n", s.String())
+		if s == webrtc.PeerConnectionStateFailed {
+			cancel()
+		}
 	})
-	ctx, cancel := context.WithCancel(ctx)
-	defer cancel()
 	peerConnection.OnDataChannel(func(d *webrtc.DataChannel) {
 		fmt.Printf("New DataChannel %s %d\n", d.Label(), d.ID())
 
