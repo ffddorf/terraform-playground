@@ -31,6 +31,7 @@ func iceGather(conn *webrtc.PeerConnection) <-chan *webrtc.ICECandidate {
 
 type webrtcSession struct {
 	Offer      webrtc.SessionDescription
+	Answer     webrtc.SessionDescription
 	Candidates []*webrtc.ICECandidate
 }
 
