@@ -1,6 +1,6 @@
 module github.com/ffddorf/tf-preview-github
 
-go 1.21.5
+go 1.22.0
 
 require (
 	github.com/cenkalti/backoff v2.2.1+incompatible
