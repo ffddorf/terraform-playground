@@ -29,6 +29,25 @@ func FetchWorkspace(ctx context.Context, peerInfo string, dst io.Writer) error {
 	if err != nil {
 		return err
 	}
+
+	dialCtx, cancel := context.WithCancel(ctx)
+	if err := agent.OnConnectionStateChange(func(cs ice.ConnectionState) {
+		if cs == ice.ConnectionStateFailed {
+			cancel()
+		}
+	}); err != nil {
+		return err
+	}
+
+	if err := agent.OnCandidate(func(c ice.Candidate) {
+		if c == nil {
+			return
+		}
+		fmt.Printf("got local candidate: %v\n", c)
+	}); err != nil {
+		return err
+	}
+
 	if err := agent.SetRemoteCredentials(sess.LocalFrag, sess.LocalPwd); err != nil {
 		return err
 	}
@@ -42,11 +61,8 @@ func FetchWorkspace(ctx context.Context, peerInfo string, dst io.Writer) error {
 		}
 	}
 
-	// if err := agent.GatherCandidates(); err != nil {
-	// 	return err
-	// }
-
-	conn, err := agent.Dial(ctx, sess.LocalFrag, sess.LocalPwd)
+	fmt.Println("dialing ICE connection")
+	conn, err := agent.Dial(dialCtx, sess.LocalFrag, sess.LocalPwd)
 	if err != nil {
 		return err
 	}
