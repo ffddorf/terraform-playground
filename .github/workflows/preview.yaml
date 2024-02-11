@@ -3,8 +3,8 @@ name: Speculative Run
 on:
   workflow_dispatch:
     inputs:
-      workspace_transfer_url:
-        description: "URL from which to download the workspace"
+      webrtc-session:
+        description: "Session (base64 encoded) for the workspace download over webrtc"
         required: true
         type: string
 
@@ -16,11 +16,16 @@ jobs:
       TF_HTTP_PASSWORD: ${{ github.token }}
       TF_IN_AUTOMATION: "true"
     steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
       - name: Download Workspace
         run: |
-          curl ${{ inputs.workspace_transfer_url }} --fail --silent | tar -xzf -
-      - uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: "1.6.6"
-      - run: terraform init
-      - run: terraform plan
+          go run ./cmd/webrtc-downloader -session ${{ inputs.webrtc-session }}
+      - run: tar -ztvf workspace.tar.gz
+      # - uses: hashicorp/setup-terraform@v3
+      #   with:
+      #     terraform_version: "1.6.6"
+      # - run: terraform init
+      # - run: terraform plan

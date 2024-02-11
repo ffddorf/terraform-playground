@@ -1,4 +1,5 @@
 /.github/
 /cmd/
+/pkg/
 /go.*
 *.tar.gz
