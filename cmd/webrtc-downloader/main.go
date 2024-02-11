@@ -8,7 +8,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	webrtclib "github.com/ffddorf/tf-preview-github/pkg/webrtc"
+	"github.com/ffddorf/tf-preview-github/pkg/quicpunch"
 )
 
 func main() {
@@ -24,7 +24,7 @@ func main() {
 		panic(err)
 	}
 	defer f.Close()
-	if err := webrtclib.RemoteChannel(ctx, session, nil); err != nil {
+	if err := quicpunch.FetchWorkspace(ctx, session, f); err != nil {
 		panic(err)
 	}
 	fmt.Println("Done downloading")
