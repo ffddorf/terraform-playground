@@ -7,7 +7,7 @@ require (
 	github.com/google/go-github/v57 v57.0.0
 	github.com/hashicorp/go-slug v0.13.3
 	github.com/stretchr/testify v1.8.4
-	golang.ngrok.com/ngrok v1.7.0
+	golang.ngrok.com/ngrok v1.9.1
 )
 
 require (
@@ -27,5 +27,6 @@ require (
 	golang.org/x/sys v0.16.0 // indirect
 	golang.org/x/term v0.16.0 // indirect
 	google.golang.org/protobuf v1.32.0 // indirect
+	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

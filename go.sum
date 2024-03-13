@@ -36,6 +36,8 @@ golang.ngrok.com/muxado/v2 v2.0.0 h1:bu9eIDhRdYNtIXNnqat/HyMeHYOAbUH55ebD7gTvW6c
 golang.ngrok.com/muxado/v2 v2.0.0/go.mod h1:wzxJYX4xiAtmwumzL+QsukVwFRXmPNv86vB8RPpOxyM=
 golang.ngrok.com/ngrok v1.7.0 h1:xwcr8QWue+ehgn54hdQwTya4B6A1qXg6+IRim6WINmA=
 golang.ngrok.com/ngrok v1.7.0/go.mod h1:ruVcXZ7Rre5O9oeqqa8uZCB3Xtkt2PoyjF3eW9b7t6A=
+golang.ngrok.com/ngrok v1.9.1 h1:hZCZ7E0t4Jhf3m3AB7YZKSZKH5lEZ5Q6C+T2hlkt8jE=
+golang.ngrok.com/ngrok v1.9.1/go.mod h1:DrWT2BcTdcnHMsP/bHEIP/Ebs0pN5VVYDpbZ3bWrwY4=
 golang.org/x/crypto v0.16.0 h1:mMMrFzRSCF0GvB7Ne27XVtVAaXLrPmgPC7/v0tkwHaY=
 golang.org/x/crypto v0.16.0/go.mod h1:gCAAfMLgwOJRpTjQ2zCCt2OcSfYMTeZVSRtQlPC7Nq4=
 golang.org/x/net v0.19.0 h1:zTwKpTd2XuCqf8huc7Fo2iSy+4RHPd10s4KzeTnVr1c=
@@ -53,5 +55,7 @@ google.golang.org/protobuf v1.32.0 h1:pPC6BG5ex8PDFnkbrGU3EixyhKcQ2aDuBS36lqK/C7
 google.golang.org/protobuf v1.32.0/go.mod h1:c6P6GXX6sHbq/GpV6MGZEdwhWPcYBgnhAHhKbcUYpos=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405 h1:yhCVgyC4o1eVCa2tZl7eS0r+SDo693bJlVdllGtEeKM=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
+gopkg.in/yaml.v2 v2.4.0 h1:D8xgwECY7CYvx+Y2n4sBz93Jn9JRvxdiyyo8CTfuKaY=
+gopkg.in/yaml.v2 v2.4.0/go.mod h1:RDklbk79AGWmwhnvt/jBztapEOGDOx6ZbXqjP6csGnQ=
 gopkg.in/yaml.v3 v3.0.1 h1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=
 gopkg.in/yaml.v3 v3.0.1/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=
