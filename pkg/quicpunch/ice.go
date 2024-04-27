@@ -5,6 +5,7 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"fmt"
+	"time"
 
 	"github.com/pion/ice/v2"
 	"github.com/pion/stun"
@@ -51,11 +52,13 @@ func genCreds() (string, string, error) {
 }
 
 func startAgent(ctx context.Context, localUfrag, localPwd string, waitForCandidates bool) (*ice.Agent, error) {
+	timeout := 5 * time.Minute
 	config := &ice.AgentConfig{
-		Urls:         urls,
-		LocalUfrag:   localUfrag,
-		LocalPwd:     localPwd,
-		NetworkTypes: networkTypes,
+		Urls:          urls,
+		LocalUfrag:    localUfrag,
+		LocalPwd:      localPwd,
+		NetworkTypes:  networkTypes,
+		FailedTimeout: &timeout,
 	}
 
 	agent, err := ice.NewAgent(config)

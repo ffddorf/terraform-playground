@@ -17,76 +17,9 @@ import (
 	"time"
 
 	"github.com/cenkalti/backoff"
+	"github.com/ffddorf/tf-preview-github/pkg/quicpunch"
 	"github.com/google/go-github/v57/github"
-	"github.com/hashicorp/go-slug"
-	"golang.ngrok.com/ngrok"
-	"golang.ngrok.com/ngrok/config"
 )
-
-type LocalContent struct {
-	dir string
-}
-
-func (c *LocalContent) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
-	rw.Header().Set("Content-Type", "application/octet-stream")
-
-	_, err := slug.Pack(c.dir, rw, true)
-	if err != nil {
-		fmt.Printf("failed to pack contents: %+v\n", err)
-		return
-	}
-
-	fmt.Println("workspace was downloaded")
-}
-
-func startServer(ctx context.Context) (string, error) {
-	listenerCtx, cancelListener := context.WithCancel(context.Background())
-
-	connected := make(chan struct{})
-	go func() {
-		select {
-		case <-connected:
-		case <-time.After(10 * time.Second):
-			cancelListener()
-		}
-	}()
-
-	listener, err := ngrok.Listen(listenerCtx, config.HTTPEndpoint(), ngrok.WithAuthtokenFromEnv())
-	if err != nil {
-		return "", err
-	}
-	close(connected)
-
-	cwd, err := os.Getwd()
-	if err != nil {
-		listener.Close()
-		return "", err
-	}
-	handler := &LocalContent{
-		dir: cwd,
-	}
-
-	server := &http.Server{
-		Handler: handler,
-	}
-
-	go func() {
-		<-ctx.Done()
-		shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		defer cancel()
-		if err := server.Shutdown(shutdownCtx); err != nil {
-			fmt.Printf("failed to shutdown server: %+v\n", err)
-		}
-	}()
-
-	go func() {
-		if err := server.Serve(listener); err != http.ErrServerClosed {
-			fmt.Printf("server failed: %+v\n", err)
-		}
-	}()
-
-	return listener.URL(), nil
-}
 
 type countingReader struct {
 	io.Reader
@@ -152,6 +85,7 @@ func streamLogs(logsURL *url.URL, skip int64) (int64, error) {
 var (
 	owner            string
 	repo             string
+	workflowRef      string
 	workflowFilename string
 )
 
@@ -162,16 +96,28 @@ func main() {
 	flag.StringVar(&owner, "github-owner", "ffddorf", "Repository owner")
 	flag.StringVar(&repo, "github-repo", "", "Repository name")
 	flag.StringVar(&workflowFilename, "workflow-file", "preview.yaml", "Name of the workflow file to run for previews")
+	flag.StringVar(&workflowRef, "workflow-ref", "main", "Ref to run the workflow from")
 	flag.Parse()
 
 	if repo == "" {
 		panic("Missing flag: -github-repo")
 	}
 
-	serverURL, err := startServer(ctx)
+	cwd, err := os.Getwd()
 	if err != nil {
 		panic(err)
 	}
+
+	sess, serve, err := quicpunch.ServeWorkspace(ctx, cwd)
+	if err != nil {
+		panic(err)
+	}
+	go func() {
+		err := serve(ctx)
+		if err != nil {
+			fmt.Printf("workspace server failed: %v", err)
+		}
+	}()
 
 	// steal token from GH CLI
 	cmd := exec.CommandContext(ctx, "gh", "auth", "token")
@@ -189,9 +135,9 @@ func main() {
 	_, err = gh.Actions.CreateWorkflowDispatchEventByFileName(ctx,
 		owner, repo, workflowFilename,
 		github.CreateWorkflowDispatchEventRequest{
-			Ref: "main",
+			Ref: workflowRef,
 			Inputs: map[string]interface{}{
-				"workspace_transfer_url": serverURL,
+				"webrtc-session": sess,
 			},
 		},
 	)
@@ -208,6 +154,7 @@ func main() {
 			ctx, owner, repo, workflowFilename,
 			&github.ListWorkflowRunsOptions{
 				Created: fmt.Sprintf(">=%s", startedAt.Format("2006-01-02T15:04")),
+				Branch:  workflowRef,
 			},
 		)
 		if err != nil {
