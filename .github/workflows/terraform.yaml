@@ -53,62 +53,12 @@ jobs:
       - run: terraform show -no-color tfplan > summary.txt
 
       - name: Create status check with details
-        uses: actions/github-script@v7
+        uses: ./actions/checks
         with:
-          github-token: ${{ github.token }}
-          script: |
-            const fs = require('fs').promises
-            const plan = JSON.parse(await fs.readFile('tfplan.json', 'utf-8'))
-            const humanSummary = await fs.readFile('summary.txt', 'utf-8')
-            let applyLog;
-            try {
-              applyLog = await fs.readFile('apply.log', 'utf-8')
-            } catch {}
-
-            function countActions(plan, type) {
-              return plan.resource_changes.filter(ch => ch.change.actions.includes(type)).length
-            }
-            const createCount = countActions(plan, 'create')
-            const updateCount = countActions(plan, 'update')
-            const deleteCount = countActions(plan, 'delete')
-
-            const noChanges = createCount == 0 && updateCount == 0 && deleteCount == 0
-            const title = noChanges
-              ? "No changes"
-              : (context.eventName === 'push'
-                ? `${createCount} added, ${updateCount} changed, ${deleteCount} destroyed`
-                : `${createCount} to add, ${updateCount} to change, ${deleteCount} to destroy`
-              )
-
-            const codefence = "```"
-            const summary = `
-            # Terraform Plan
-            ${codefence}
-            ${humanSummary.trim("\n")}
-            ${codefence}
-            ${!!applyLog ? `
-            # Terraform Apply
-            ${codefence}
-            ${applyLog.replace(/\u001b\[[^m]+m/g, '').trim()}
-            ${codefence}
-            ` : ""}
-            `
-
-            const sha = context.eventName === 'pull_request'
-              ? context.payload.pull_request.head.sha
-              : context.sha
-            await github.rest.checks.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              head_sha: sha,
-              status: 'completed',
-              conclusion: noChanges ? 'neutral' : 'success',
-              name: context.eventName === 'push' ? "Apply" : "Plan",
-              output: {
-                title,
-                summary,
-              },
-            });
+          token: ${{ github.token }}
+          plan-json: tfplan.json
+          plan-summary: summary.txt
+          apply-summary: apply.log
 
       - name: Show plan on PR
         uses: actions/github-script@v7
