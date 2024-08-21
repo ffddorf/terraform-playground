@@ -7,7 +7,7 @@ require (
 	github.com/go-git/go-git/v5 v5.12.0
 	github.com/google/go-github/v57 v57.0.0
 	github.com/google/uuid v1.6.0
-	github.com/hashicorp/go-slug v0.13.3
+	github.com/hashicorp/go-slug v0.16.0
 	github.com/hashicorp/hcl/v2 v2.20.1
 	github.com/stretchr/testify v1.9.0
 	github.com/whilp/git-urls v1.0.0
