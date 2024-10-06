@@ -6,6 +6,7 @@ require (
 	github.com/cenkalti/backoff v2.2.1+incompatible
 	github.com/go-git/go-git/v5 v5.12.0
 	github.com/google/go-github/v57 v57.0.0
+	github.com/google/go-github/v66 v66.0.0
 	github.com/google/uuid v1.6.0
 	github.com/hashicorp/go-slug v0.13.3
 	github.com/hashicorp/hcl/v2 v2.20.1
