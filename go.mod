@@ -1,11 +1,14 @@
 module github.com/ffddorf/tf-preview-github
 
-go 1.21.5
+go 1.24.0
+
+toolchain go1.24.11
 
 require (
 	github.com/cenkalti/backoff v2.2.1+incompatible
 	github.com/go-git/go-git/v5 v5.12.0
 	github.com/google/go-github/v57 v57.0.0
+	github.com/google/go-github/v81 v81.0.0
 	github.com/google/uuid v1.6.0
 	github.com/hashicorp/go-slug v0.13.3
 	github.com/hashicorp/hcl/v2 v2.20.1
